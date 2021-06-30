@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TEST | Firb Mobile API</title>
+</head>
+<body>
+<h1>hello~ firb mobile API 2</h1>
+
+<button id="btnGetToken">getTokenAndVersion</button>
+
+<script src="dist/firb-mobile-api-bundle.js"></script>
+<script type="text/javascript">
+  (function () {
+    // mobile info setting!
+    const mobileInfo = {
+      ios: {
+        download: 'https://firb-mobile.herokuapp.com/assets/cybercampus.plist',
+        version: '0.0.9',
+      },
+      android: {
+        download: 'https://firb-mobile.herokuapp.com/assets/cybercampus.apk',
+        version: '0.0.12',
+      }
+    };
+
+    FirbMobile.setMobileInfo(mobileInfo);
+    FirbMobile.setLogger({
+      log: (...args) => console.log(...args, 'kakakakakakakaka')
+    });
+    FirbMobile.isDebugMode(true);
+
+  })();
+</script>
+<script defer>
+  (function (){
+    const btnGetToken = document.getElementById('btnGetToken');
+    btnGetToken.addEventListener('click', (e) => FirbMobile.request.tokenAndVersion());
+  })();
+</script>
+
+</body>
+</html>
