@@ -1,14 +1,14 @@
 import UAParser from 'ua-parser-js';
 
-type TokenAndVersionCallback = ({token, version, device}: {token: string, version: string, device: string}) => void;
-type UserInfoCallback = ({autoLoginYn, id, secret}: { autoLoginYn: 'Y' | 'N', id: string, secret: string }) => void;
+type TokenAndVersionCallback = (token: string, version: string, device: MobileOS) => void;
+type UserInfoCallback = (autoLoginYn: 'Y' | 'N', id: string, secret: string) => void;
 type QRCodeCallback = (url: string) => void;
 interface Callback {
-  tokenAndVersion: TokenAndVersionCallback;
-  userInfo: UserInfoCallback;
-  qrcode: QRCodeCallback;
+  tokenAndVersion?: TokenAndVersionCallback;
+  userInfo?: UserInfoCallback;
+  qrcode?: QRCodeCallback;
 }
-type MobileInfo = Record<'ios' | 'android', {download: string, version: string}>;
+export type MobileInfo = Record<'ios' | 'android', {download: string, version: string}>;
 enum MobileOS {
   IOS = 'ios',
   ANDROID = 'android'
@@ -20,7 +20,7 @@ const logger = {log: console.log};
 export default (function(w, uap, logger, _debug) {
   const os = uap.getOS().name.toLowerCase();
   let mobileInfo: MobileInfo;
-  let callback: Callback;
+  const callback: Callback = {};
 
   const request = {
     tokenAndVersion: function (_fn: TokenAndVersionCallback) {
@@ -49,8 +49,8 @@ export default (function(w, uap, logger, _debug) {
       const code = 'setAutoLoginData';
 
       // TODO blackpet: 서버에서 암회화된 id, key 를 받아와야 한다!
+      requestToNative({code, autoLoginYn, id, secret: 'a crypted secret key'});
 
-      requestToNative({code, autoLoginYn, id, secret: '4O2YDhbHf2IdL+hpm/1+ww=='});
     },
 
     updateApp: function (ver) {
@@ -94,15 +94,15 @@ export default (function(w, uap, logger, _debug) {
   const response = {
     // callback for request.tokenAndVersion()
     tokenAndVersion: function (token, version) {
-      log({token, version}, 'tokenAndVersion');
+      log('tokenAndVersion', {token, version});
 
       // invoke callback with data
       if (callback.tokenAndVersion) {
-        callback.tokenAndVersion({
+        callback.tokenAndVersion(
           token,
           version,
-          device: os.toUpperCase()
-        });
+          os.toUpperCase()
+        );
       }
 
       request.updateApp(version);
@@ -110,17 +110,17 @@ export default (function(w, uap, logger, _debug) {
 
     // callback for request.userInfo()
     userInfo: function (autoLoginYn, id, secret) {
-      log({autoLoginYn, id, secret: secret}, 'userInfo');
+      log('userInfo', {autoLoginYn, id, secret: secret});
 
       // invoke callback with data
       if (callback.userInfo) {
-        callback.userInfo({autoLoginYn, id, secret: secret});
+        callback.userInfo(autoLoginYn, id, secret);
       }
     },
 
     // callback for request.qrcode()
     qrcode: function (url) {
-      log(url, 'qrcode');
+      log('qrcode', url);
 
       // invoke callback with data
       if (callback.qrcode) {
@@ -140,7 +140,7 @@ export default (function(w, uap, logger, _debug) {
   }
 
   function requestToNative(data) {
-    log(data, 'requestToNative');
+    log('requestToNative', data);
 
     // Native App 인 경우에만 실행한다!
     if (!isNativeApp()) {
