@@ -1,0 +1,26 @@
+GET http://localhost:5005/api/url
+Accept: application/json
+
+###
+
+
+POST http://localhost:5005/api/url
+Content-Type: application/json
+
+{
+  "name": "test123",
+  "url": "http://naver.com"
+}
+
+###
+
+
+DELETE http://localhost:5005/api/url
+Content-Type: application/json
+
+{
+  "id": "cQt3vwyyedOBbKVfax5f"
+}
+
+###
+
