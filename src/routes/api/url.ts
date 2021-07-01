@@ -30,6 +30,5 @@ export async function del({body: {id}}) {
 }
 
 
-function urls() {
-  return db.collection('urls');
-}
+const urls = () => db.collection('urls');
+const version = () => db.collection('version');
