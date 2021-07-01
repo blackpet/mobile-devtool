@@ -1,4 +1,8 @@
 import preprocess from 'svelte-preprocess';
+import vercel from '@sveltejs/adapter-vercel';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -10,7 +14,8 @@ const config = {
 
 	kit: {
 		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte'
+		target: '#svelte',
+		adapter: vercel(),
 	}
 };
 
