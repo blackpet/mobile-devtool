@@ -1,5 +1,5 @@
 {
-	"name": "~TODO~",
+	"name": "firb-mobile",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "npm run build:webpack && svelte-kit dev --port 5005",
