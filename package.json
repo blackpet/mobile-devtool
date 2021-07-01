@@ -12,6 +12,7 @@
 		"build:webpack": "webpack"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.14.6",
 		"@sveltejs/adapter-vercel": "^1.0.0-next.22",
 		"@sveltejs/kit": "next",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
