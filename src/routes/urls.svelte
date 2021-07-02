@@ -1,6 +1,7 @@
 <script lang="ts">
   import axios from "axios";
   import {onMount} from 'svelte';
+  import {goto} from '$app/navigation';
 
   let urlInput;
   let urls;
@@ -57,7 +58,7 @@
     {#if urls}
       <ul>
         {#each urls as url}
-          <li>
+          <li class="py-1">
             <a href on:click={() => urlInput = url.url}>
               <span>{url.url}</span>
             </a>
