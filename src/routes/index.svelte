@@ -161,7 +161,7 @@
 
     <section>
       <h2>User Agent</h2>
-      <div class="prose">
+      <div class="prose max-w-none">
         <ul>
           <li>ua: {ua.ua}</li>
           <li>brwoser
