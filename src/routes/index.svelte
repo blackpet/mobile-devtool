@@ -1,9 +1,6 @@
-<script context="module">
-
-</script>
-
 <script>
   import {onMount, tick} from "svelte";
+  import {goto} from '$app/navigation';
   import axios from 'axios';
   import UAParser from 'ua-parser-js';
 
@@ -77,7 +74,14 @@
 
 <div class="container mx-auto">
   <div class="h-[50vh] overflow-hidden overflow-y-scroll overflow-x-scroll">
-    <h1 class="text-center">Firstbrains Mobile App DevTools</h1>
+    <h1 class="text-center relative">
+      Firb App DevTools
+      <button class="absolute right-0 text-blue-600 bg-blue-100 rounded p-1" on:click={() => goto('urls')}>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        </svg>
+      </button>
+    </h1>
 
     <section>
       <p>Visit <a href="https://www.notion.so/blackpet/Mobile-Native-Interface-892e01854e9148dfbb7601849c1b7830" target="_blank">Notion Page</a> to read the documentation</p>
