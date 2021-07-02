@@ -3,6 +3,8 @@ import serviceAccount from '../../firb-mobile-firebase-adminsdk-auwn5-a15fb79415
 
 let db = null;
 function initDatabase() {
+  if(db !== null) return;
+
   admin.initializeApp({
     credential: admin.credential.cert({
       projectId: serviceAccount.project_id,
