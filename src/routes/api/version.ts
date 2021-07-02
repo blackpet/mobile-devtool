@@ -1,7 +1,7 @@
 import {db} from '../../libs/firebase';
 
 export async function get() {
-  const res = await version().get();
+  const res = await collection().get();
   const ver = {};
   res.docs.forEach(doc => ver[doc.id] = doc.data());
 
@@ -12,11 +12,12 @@ export async function get() {
 
 export async function post({body}) {
   const {id, download, version} = body;
-  const url = await version().doc(id).set({download, version});
+  console.log(body);
+  await collection().doc(id).set({download, version});
 
   return {
     body
   };
 }
 
-const version = () => db.collection('version');
+const collection = () => db.collection('version');

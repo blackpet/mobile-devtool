@@ -1,11 +1,20 @@
+<script context="module">
+
+</script>
+
 <script>
   import {onMount, tick} from "svelte";
   import axios from 'axios';
+  import UAParser from 'ua-parser-js';
+
+  const uap = new UAParser();
+  const ua = {ua: uap.getUA(), os: uap.getOS(), browser: uap.getBrowser()};
 
   let firbMobile;
   let logs = [];
   let url = 'http://naver.com';
   let code; // console code panel
+  let version;
 
   onMount(() => {
     initFirbMobile();
@@ -24,8 +33,9 @@
     firbMobile = window.FirbMobile;
     console.log('firbMobile', firbMobile);
 
-    const version = await axios.get('/api/version');
-    firbMobile.setMobileInfo(version.data);
+    version = (await axios.get('/api/version')).data;
+    console.log(version);
+    firbMobile.setMobileInfo(version);
     firbMobile.isDebugMode(true);
     firbMobile.setLogger({log});
   }
@@ -53,6 +63,11 @@
     firbMobile.request.qrcode(
       (url) => log('callback::qrcode', url)
     );
+  }
+
+  async function updateVersion(os) {
+    await axios.post('/api/version', {id: os, ...version[os]});
+    log(`${os} version info updated!`);
   }
 </script>
 
@@ -95,11 +110,75 @@
       <p>Execute QRCode Reader</p>
     </section>
 
-    <section class="bg-green-600">
+    <section class="bg-green-400">
       <h2>Response Test</h2>
       <button class="btn" on:click={() => firbMobile.response.tokenAndVersion('token', '0.0.0')}>getTokenData</button>
       <button class="btn" on:click={() => firbMobile.response.userInfo('Y', 'stored user-id', 'stored secret key')}>getAutoLoginData</button>
       <button class="btn" on:click={() => firbMobile.response.qrcode('http://qr-code-url.com')}>qrcode</button>
+    </section>
+
+    {#if version}
+      <section class="bg-red-400">
+        <div class="flex">
+          <h2>iOS Version</h2>
+          <button class="btn" on:click={() => updateVersion('ios')}>update</button>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:justify-between">
+          <div class="p-2 flex-1">
+            Download URL: <input type="text"
+                   class="p-2 rounded w-full"
+                   bind:value={version.ios.download} placeholder="iOS Download URL...">
+          </div>
+          <div class="p-2 flex-1">
+            Version: <input type="text"
+                   class="p-2 rounded w-full"
+                   bind:value={version.ios.version} placeholder="iOS Version...">
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-red-400">
+        <div class="flex">
+          <h2>Android Version</h2>
+          <button class="btn" on:click={() => updateVersion('android')}>update</button>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:justify-between">
+          <div class="p-2 flex-1">
+            Download URL: <input type="text"
+                   class="p-2 rounded w-full"
+                   bind:value={version.android.download} placeholder="Android Download URL...">
+          </div>
+          <div class="p-2 flex-1">
+            Version: <input type="text"
+                   class="p-2 rounded w-full"
+                   bind:value={version.android.version} placeholder="Android Version...">
+          </div>
+        </div>
+      </section>
+    {/if}
+
+    <section>
+      <h2>User Agent</h2>
+      <div class="prose">
+        <ul>
+          <li>ua: {ua.ua}</li>
+          <li>brwoser
+            <ul class="!my-0">
+              <li>name: {ua.browser.name}</li>
+              <li>version: {ua.browser.version}</li>
+              <li>major: {ua.browser.major}</li>
+            </ul>
+          </li>
+          <li>os
+            <ul class="!my-0">
+              <li>name: {ua.os.name}</li>
+              <li>version: {ua.os.version}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </section>
   </div>
 </div>
