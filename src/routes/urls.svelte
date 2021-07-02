@@ -1,9 +1,11 @@
 <script lang="ts">
-  import {goto} from '$app/navigation';
   import axios from "axios";
+  import {onMount} from 'svelte';
 
   let urlInput;
   let urls;
+
+  onMount(() => loadUrls());
 
   function loadUrls() {
     return axios.get('/api/url').then(res => urls = res.data);
@@ -16,6 +18,7 @@
   async function addToList() {
     const res = await axios.post('/api/url', {url: urlInput});
 
+    // update state
     urls = [...urls, res.data];
   }
 </script>
@@ -48,39 +51,23 @@
     </div>
   </section>
 
-  <section class="prose max-w-none">
+  <section class="prose max-w-none prose-red">
     <h2>URL List</h2>
 
-    {#await loadUrls()}
-      loading...
-    {:then _}
+    {#if urls}
       <ul>
         {#each urls as url}
           <li>
-            <span>{url.url}</span>
+            <a href on:click={() => urlInput = url.url}>
+              <span>{url.url}</span>
+            </a>
             {#if url.name}
               <span class="bg-indigo-400 text-gray-50 p-2 rounded ml-2">{url.name}</span>
             {/if}
           </li>
         {/each}
       </ul>
-    {/await}
-
-
-
-
-    <!--{#await loadUrls()}-->
-    <!--  <div>Loading URLs...</div>-->
-    <!--{:then _}-->
-    <!--  <ul>-->
-    <!--    {#each urls as {name, url}}-->
-    <!--      <li on:click={() => urlInput = url}>-->
-    <!--      </li>-->
-    <!--    {:else}-->
-    <!--      <li>NO_URLs</li>-->
-    <!--    {/each}-->
-    <!--  </ul>-->
-    <!--{/await}-->
+    {/if}
 
   </section>
 </div>
