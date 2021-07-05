@@ -190,8 +190,8 @@
 <code class="block w-screen h-[50vh] bg-gray-800 overflow-hidden overflow-y-scroll p-2 text-gray-50 text-xs md:text-base"
       bind:this={code}>
   {#each logs as log, i}
-    <pre>#{i}: {log}</pre>
+    <code class="block break-all">#{i}: {log}</code>
   {:else}
-    <pre class="text-center">NO LOGS YET</pre>
+    <code class="text-center">NO LOGS YET</code>
   {/each}
 </code>
