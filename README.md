@@ -131,9 +131,8 @@ secret: 암호화된 인증 key
 
 ### 5. Link to External page  `goOutLink`
 
-내부 시스템이 아닌 외부 시스템(또는 페이지)로 링크할 경우 호출
+기기의 자체 브라우저(Safari / 인터넷 APP)로 연결 (앱 전환)
 
-돌아올 수 있는 `Back/Close Navigation Button` 표시
 
 1. Request `Web —> Native`
 
@@ -153,7 +152,9 @@ secret: 암호화된 인증 key
 
 ### 6. Open New Window  `newWindow`
 
-기기의 자체 브라우저(Safari / 인터넷 APP)로 연결 (앱 전환)
+내부 시스템이 아닌 외부 시스템(또는 페이지)로 링크할 경우 호출
+
+돌아올 수 있는 `Back/Close Navigation Button` 표시
 
 1. Request `Web —> Native`
 
