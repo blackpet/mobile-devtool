@@ -3,10 +3,12 @@ import UAParser from 'ua-parser-js';
 type TokenAndVersionCallback = (token: string, version: string, device: MobileOS) => void;
 type UserInfoCallback = (autoLoginYn: 'Y' | 'N', id: string, secret: string) => void;
 type QRCodeCallback = (url: string) => void;
+type CoordinatesCallback = (lat: number, long: number) => void;
 interface Callback {
   tokenAndVersion?: TokenAndVersionCallback;
   userInfo?: UserInfoCallback;
   qrcode?: QRCodeCallback;
+  coordinates?: CoordinatesCallback;
 }
 export type MobileInfo = Record<'ios' | 'android', {download: string, version: string}>;
 enum MobileOS {
@@ -50,7 +52,6 @@ export default (function(w, uap, logger, _debug) {
 
       // TODO blackpet: 서버에서 암회화된 id, key 를 받아와야 한다!
       requestToNative({code, autoLoginYn, id, secret: 'a crypted secret key'});
-
     },
 
     updateApp: function (ver) {
@@ -89,6 +90,17 @@ export default (function(w, uap, logger, _debug) {
       requestToNative({code});
     },
 
+    coordinates: function (_fn: CoordinatesCallback) {
+      // assign callback
+      if (!!_fn && typeof _fn === 'function') {
+        callback.coordinates = _fn;
+      }
+
+      const code = 'getCoordinates';
+
+      requestToNative({code});
+    }
+
   };
 
   const response = {
@@ -126,7 +138,17 @@ export default (function(w, uap, logger, _debug) {
       if (callback.qrcode) {
         callback.qrcode(url);
       }
-    }
+    },
+
+    // callback for request.qrcode()
+    coordinates: function (lat, long) {
+      log('coordinates', lat, long);
+
+      // invoke callback with data
+      if (callback.coordinates) {
+        callback.coordinates(lat, long);
+      }
+    },
   };
 
 
