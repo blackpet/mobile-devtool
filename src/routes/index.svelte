@@ -61,6 +61,11 @@
       (url) => log('callback::qrcode', url)
     );
   }
+  function coordinates() {
+    firbMobile.request.coordinates(
+      (lat, long) => log('callback::coordinates', lat, long)
+    );
+  }
 
   async function updateVersion(os) {
     await axios.post('/api/version', {id: os, ...version[os]});
@@ -83,21 +88,25 @@
       </button>
     </h1>
 
+    <!--Documentation-->
     <section>
       <p>Visit <a href="https://www.notion.so/blackpet/Mobile-Native-Interface-892e01854e9148dfbb7601849c1b7830" target="_blank">Notion Page</a> to read the documentation</p>
     </section>
 
+    <!--getTokenData-->
     <section>
       <button class="btn" on:click={getTokenData}>getTokenData</button>
       <p>Request Device Token and App Version</p>
     </section>
 
+    <!--autoLoginData-->
     <section>
       <button class="btn" on:click={setAutoLoginData}>setAutoLoginData</button>
       <button class="btn" on:click={getAutoLoginData}>getAutoLoginData</button>
       <p>Save Auto-Login Info | Retrieve Auto-Login Info</p>
     </section>
 
+    <!--goOutLink / newWindow-->
     <section>
       <div class="pb-2">
         <input type="text"
@@ -109,16 +118,26 @@
       <p>Link External page | Open Browser</p>
     </section>
 
+    <!--QRCode-->
     <section>
       <button class="btn" on:click={qrcode}>qrcode</button>
       <p>Execute QRCode Reader</p>
     </section>
+
+
+    <!--GEO coordinates-->
+    <section>
+      <button class="btn" on:click={coordinates}>coordinates</button>
+      <p>Request GPS Coordinates</p>
+    </section>
+
 
     <section class="bg-green-400">
       <h2>Response Test</h2>
       <button class="btn" on:click={() => firbMobile.response.tokenAndVersion('token', '0.0.0')}>getTokenData</button>
       <button class="btn" on:click={() => firbMobile.response.userInfo('Y', 'stored user-id', 'stored secret key')}>getAutoLoginData</button>
       <button class="btn" on:click={() => firbMobile.response.qrcode('http://qr-code-url.com')}>qrcode</button>
+      <button class="btn" on:click={() => firbMobile.response.coordinates(123.45, 567.89)}>coordinates</button>
     </section>
 
     {#if version}
