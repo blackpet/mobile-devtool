@@ -6,7 +6,7 @@ let messaging = null;
 function initMessaging() {
   if(messaging !== null) return;
 
-  const serviceAccount = kirdLmsServiceAccount;
+  const serviceAccount = smartEduServiceAccount;
 
   const kirdAdmin = admin.initializeApp({
     credential: admin.credential.cert({
