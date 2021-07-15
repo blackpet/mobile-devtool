@@ -173,7 +173,9 @@
 
     <section class="bg-green-400">
       <h2>Response Test</h2>
-      <button class="btn" on:click={() => firbMobile.response.tokenAndVersion('token', '0.0.0')}>getTokenData</button>
+      <button class="btn" on:click={() => firbMobile.response.tokenAndVersion(
+        'f6yVeJQwDUK6rCl2Lt0Brh:APA91bFP3JL7N4VAqMQxXLXrd2zGmV7KrgpRB9yLhZ93HQVN1IOjUDKRttThHMPGDV8UpcWogv9NQeSOW9x8g4B0-a1WKxH7x3t3WY75e9RKlQECqetR7k7Hp2k9G2AEy2jAF7xt-Upq',
+        '0.0.2')}>getTokenData</button>
       <button class="btn" on:click={() => firbMobile.response.userInfo('Y', 'stored user-id', 'stored secret key')}>getAutoLoginData</button>
       <button class="btn" on:click={() => firbMobile.response.qrcode('http://qr-code-url.com')}>qrcode</button>
       <button class="btn" on:click={() => firbMobile.response.coordinates(123.45, 567.89)}>coordinates</button>
