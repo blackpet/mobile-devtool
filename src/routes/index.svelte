@@ -88,8 +88,8 @@
     token ??= 'f6yVeJQwDUK6rCl2Lt0Brh:APA91bFP3JL7N4VAqMQxXLXrd2zGmV7KrgpRB9yLhZ93HQVN1IOjUDKRttThHMPGDV8UpcWogv9NQeSOW9x8g4B0-a1WKxH7x3t3WY75e9RKlQECqetR7k7Hp2k9G2AEy2jAF7xt-Upq';
 
     const data = {...pushData, token};
-    await axios.post('/api/push', data);
-    log(data);
+    const res = await axios.post('/api/push', data);
+    log(res.data);
   }
 </script>
 
