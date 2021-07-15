@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../../smartedu-86e0a-firebase-adminsdk-k33ow-f2e7128bbc.json';
+import serviceAccount from '../../kird-lms-firebase-adminsdk-1xo87-721d51bcdd.json';
 
 let messaging = null;
 function initMessaging() {

@@ -2,18 +2,24 @@ import {messaging} from '../../libs/firebase-kird';
 
 export async function post({body}) {
   const {title, body: content, url, token} = body;
+  let res;
+
   console.log(body);
 
-  await messaging.send({
+  const data = {
     notification: {title, body: content},
     token,
     data: {targetUrl: url},
-  });
+  };
+
+  try {
+    await messaging.send(data);
+    res = {status: 200, data};
+  } catch (err) {
+    res = {status: 500, err};
+  }
 
   return {
-    body: {
-      status: 200,
-      ...body
-    }
+    body: res
   };
 }
