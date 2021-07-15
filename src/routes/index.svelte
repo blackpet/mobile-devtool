@@ -13,6 +13,13 @@
   let code; // console code panel
   let version;
 
+  let token; // device token
+  let pushData = {
+    title: '',
+    body: '',
+    url: '',
+  }
+
   onMount(() => {
     initFirbMobile();
   })
@@ -39,7 +46,11 @@
 
   function getTokenData() {
     firbMobile.request.tokenAndVersion(
-      (token, version, os) => log('callback::getTokenData', token, version, os)
+      (_token, version, os) => {
+        log('callback::getTokenData', _token, version, os);
+        token = _token;
+        log('set token locally. you can test to push notification now!');
+      }
     );
   }
   function setAutoLoginData() {
@@ -71,6 +82,15 @@
     await axios.post('/api/version', {id: os, ...version[os]});
     log(`${os} version info updated!`);
   }
+
+  async function sendPush() {
+    // DEBUG
+    token ??= 'f6yVeJQwDUK6rCl2Lt0Brh:APA91bFP3JL7N4VAqMQxXLXrd2zGmV7KrgpRB9yLhZ93HQVN1IOjUDKRttThHMPGDV8UpcWogv9NQeSOW9x8g4B0-a1WKxH7x3t3WY75e9RKlQECqetR7k7Hp2k9G2AEy2jAF7xt-Upq';
+
+    const data = {...pushData, token};
+    await axios.post('/api/push', data);
+    log(data);
+  }
 </script>
 
 <svelte:head>
@@ -99,6 +119,27 @@
       <p>Request Device Token and App Version</p>
     </section>
 
+    {#if !token}
+      <section class="bg-green-400">
+        <h2>Push Test</h2>
+        <div class="space-y-1 sm:space-y-0 sm:gap-2 sm:grid sm:grid-cols-3">
+          <input type="text" bind:value={pushData.title} placeholder="Title...">
+          <input type="text" bind:value={pushData.body} placeholder="Body...">
+          <input type="text" bind:value={pushData.url} placeholder="Target URL...">
+        </div>
+        <div class="flex justify-between mt-4">
+          <div>
+            <a href on:click|preventDefault={() => pushData.url = 'http://naver.com'}>네이버</a> |
+            <a href on:click|preventDefault={() => pushData.url = 'https://firb-mobile.vercel.app/'}>DevTool</a> |
+            <a href on:click|preventDefault={() => pushData.url = ''}>직접입력</a>
+          </div>
+          <div>
+            <button class="btn" on:click={sendPush}>Send</button>
+          </div>
+        </div>
+      </section>
+    {/if}
+
     <!--autoLoginData-->
     <section>
       <button class="btn" on:click={setAutoLoginData}>setAutoLoginData</button>
@@ -109,9 +150,7 @@
     <!--goOutLink / newWindow-->
     <section>
       <div class="pb-2">
-        <input type="text"
-               class="p-2 rounded w-full"
-               bind:value={url} placeholder="URL...">
+        <input type="text" bind:value={url} placeholder="URL...">
       </div>
       <button class="btn" on:click={goOutLink} disabled={!url}>goOutLink</button>
       <button class="btn" on:click={newWindow} disabled={!url}>newWindow</button>
@@ -149,14 +188,10 @@
 
         <div class="flex flex-col md:flex-row md:justify-between">
           <div class="p-2 flex-1">
-            Download URL: <input type="text"
-                   class="p-2 rounded w-full"
-                   bind:value={version.ios.download} placeholder="iOS Download URL...">
+            Download URL: <input type="text" bind:value={version.ios.download} placeholder="iOS Download URL...">
           </div>
           <div class="p-2 flex-1">
-            Version: <input type="text"
-                   class="p-2 rounded w-full"
-                   bind:value={version.ios.version} placeholder="iOS Version...">
+            Version: <input type="text" bind:value={version.ios.version} placeholder="iOS Version...">
           </div>
         </div>
       </section>
@@ -169,14 +204,10 @@
 
         <div class="flex flex-col md:flex-row md:justify-between">
           <div class="p-2 flex-1">
-            Download URL: <input type="text"
-                   class="p-2 rounded w-full"
-                   bind:value={version.android.download} placeholder="Android Download URL...">
+            Download URL: <input type="text" bind:value={version.android.download} placeholder="Android Download URL...">
           </div>
           <div class="p-2 flex-1">
-            Version: <input type="text"
-                   class="p-2 rounded w-full"
-                   bind:value={version.android.version} placeholder="Android Version...">
+            Version: <input type="text" bind:value={version.android.version} placeholder="Android Version...">
           </div>
         </div>
       </section>
@@ -214,3 +245,10 @@
     <code class="text-center">NO LOGS YET</code>
   {/each}
 </code>
+
+
+<style>
+  input {
+    @apply p-2 rounded w-full;
+  }
+</style>
