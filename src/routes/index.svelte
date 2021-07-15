@@ -119,7 +119,7 @@
       <p>Request Device Token and App Version</p>
     </section>
 
-    {#if !token}
+    {#if token}
       <section class="bg-green-400">
         <h2>Push Test</h2>
         <div class="space-y-1 sm:space-y-0 sm:gap-2 sm:grid sm:grid-cols-3">
