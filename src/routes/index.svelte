@@ -91,6 +91,10 @@
     const res = await axios.post('/api/push', data);
     log(res.data);
   }
+
+  function orientation(orientation) {
+    firbMobile.request.orientation(orientation);
+  }
 </script>
 
 <svelte:head>
@@ -168,6 +172,13 @@
     <section>
       <button class="btn" on:click={coordinates}>coordinates</button>
       <p>Request GPS Coordinates</p>
+    </section>
+
+    <!--set orientation -->
+    <section>
+      <button class="btn" on:click={() => orientation('landscape')}>landscape</button>
+      <button class="btn" on:click={() => orientation('portrait')}>portrait</button>
+      <p>Request set Orientation</p>
     </section>
 
 
