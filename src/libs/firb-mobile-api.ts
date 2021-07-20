@@ -76,7 +76,7 @@ export default (function(w, uap, logger, _debug) {
     openWindow: function (url) {
       const code = 'newWindow';
 
-      requestToNative({code, url: url});
+      requestToNative({code, url});
     },
 
     qrcode: function (_fn: QRCodeCallback) {
@@ -99,6 +99,12 @@ export default (function(w, uap, logger, _debug) {
       const code = 'getCoordinates';
 
       requestToNative({code});
+    },
+
+    orientation: function(orientation = 'portrait') {
+      const code = 'setOrientation';
+
+      requestToNative({code, orientation});
     }
 
   };
