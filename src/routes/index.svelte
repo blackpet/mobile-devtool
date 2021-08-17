@@ -198,7 +198,7 @@
 
     {#if version}
       <section class="bg-red-400">
-        <div class="flex">
+        <div class="flex gap-2">
           <h2>iOS Version</h2>
           <button class="btn" on:click={() => updateVersion('ios')}>update</button>
           <button class="btn" on:click={() => download(version.ios.download)}>download</button>
@@ -215,7 +215,7 @@
       </section>
 
       <section class="bg-red-400">
-        <div class="flex">
+        <div class="flex gap-2">
           <h2>Android Version</h2>
           <button class="btn" on:click={() => updateVersion('android')}>update</button>
           <button class="btn" on:click={() => download(version.android.download)}>download</button>
