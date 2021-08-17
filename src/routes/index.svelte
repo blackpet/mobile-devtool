@@ -95,6 +95,10 @@
   function orientation(orientation) {
     firbMobile.request.orientation(orientation);
   }
+
+  function download(url) {
+    location.href = url;
+  }
 </script>
 
 <svelte:head>
@@ -197,6 +201,7 @@
         <div class="flex">
           <h2>iOS Version</h2>
           <button class="btn" on:click={() => updateVersion('ios')}>update</button>
+          <button class="btn" on:click={() => download(version.ios.download)}>download</button>
         </div>
 
         <div class="flex flex-col md:flex-row md:justify-between">
@@ -213,6 +218,7 @@
         <div class="flex">
           <h2>Android Version</h2>
           <button class="btn" on:click={() => updateVersion('android')}>update</button>
+          <button class="btn" on:click={() => download(version.android.download)}>download</button>
         </div>
 
         <div class="flex flex-col md:flex-row md:justify-between">
