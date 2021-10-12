@@ -192,3 +192,52 @@ secret: 암호화된 인증 key
     // call script
     FirbMobile.response.qrcode(url)
     ```
+
+### 8. Orientation `setOrientation`
+
+플레이어 재생 등 가로/세로 방향을 변경할 때 사용
+
+#### orientation
+- portrait
+- landscape
+
+
+1. Request `Web -> Native`
+
+    ```jsx
+    // iOS
+    firb://{"code": "setOrientation", "orientation": "portrait"}
+   
+
+    // Android
+    window.Android.firb({"code": "setOrientation", "orientation": "portrait"})
+    ```
+
+
+2. Response `Native —> Web`
+
+    ```jsx
+    // no response
+    ```
+
+
+### 9. GEO Location coordinates  `getCoordinates`
+
+GPS 기반 좌표 호출 / 응답
+
+1. Request `Web —> Native`
+
+    ```jsx
+    // iOS
+    firb://{"code": "getCoordinates"}
+
+    // Android
+    window.Android.firb({"code": "getCoordinates"})
+    ```
+
+2. Response `Native —> Web`
+
+    ```jsx
+    // call script
+    FirbMobile.response.coordinates(lat, long)
+    ```
