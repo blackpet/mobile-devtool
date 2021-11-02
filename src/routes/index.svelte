@@ -53,6 +53,16 @@
       }
     );
   }
+
+  // 설정 화면
+  function getSettingData() {
+    firbMobile.request.settingData(
+        (version, autoLoginYn, pushYn) => {
+          log('callback::getSettingData', version, autoLoginYn, pushYn);
+        }
+    );
+  }
+
   function setAutoLoginData() {
     firbMobile.request.saveUserInfo('Y', 'user1');
   }
@@ -119,6 +129,12 @@
     <!--Documentation-->
     <section>
       <p>Visit <a href="https://www.notion.so/blackpet/Mobile-Native-Interface-892e01854e9148dfbb7601849c1b7830" target="_blank">Notion Page</a> to read the documentation</p>
+    </section>
+
+    <!--getSettingData-->
+    <section>
+      <button class="btn" on:click={getSettingData}>getSettingData</button>
+      <p>Request App Version, AutoLoginYn and PushYn</p>
     </section>
 
     <!--getTokenData-->
