@@ -126,7 +126,7 @@ export default (function(w, uap, logger, _debug) {
   };
 
   const response = {
-    // callback for request.tokenAndVersion()
+    // callback for request.settingData()
     settingData: function (version, pushYn) {
       log('settingData', {version, pushYn});
 
@@ -139,6 +139,7 @@ export default (function(w, uap, logger, _debug) {
       }
     },
 
+    // callback for request.tokenAndVersion()
     tokenAndVersion: function (token, version) {
       log('tokenAndVersion', {token, version});
 

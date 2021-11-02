@@ -57,9 +57,7 @@
   // 설정 화면
   function getSettingData() {
     firbMobile.request.settingData(
-        (version, pushYn) => {
-          log('callback::getSettingData', version, pushYn);
-        }
+        (version, pushYn) => log('callback::getSettingData', version, pushYn)
     );
   }
 
