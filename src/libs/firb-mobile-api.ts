@@ -1,6 +1,6 @@
 import UAParser from 'ua-parser-js';
 
-type settingDataCallback = (version: string, autoLoginYn: 'Y' | 'N', pushYn: 'Y' | 'N') => void;
+type settingDataCallback = (version: string, pushYn: 'Y' | 'N') => void;
 type TokenAndVersionCallback = (token: string, version: string, device: MobileOS) => void;
 type UserInfoCallback = (autoLoginYn: 'Y' | 'N', id: string, secret: string) => void;
 type QRCodeCallback = (url: string) => void;
@@ -127,15 +127,14 @@ export default (function(w, uap, logger, _debug) {
 
   const response = {
     // callback for request.tokenAndVersion()
-    settingData: function (version, autoLoginYn, pushYn) {
-      log('settingData', {version, autoLoginYn, pushYn});
+    settingData: function (version, pushYn) {
+      log('settingData', {version, pushYn});
 
       // invoke callback with data
       if (callback.settingData) {
         callback.settingData(
-            autoLoginYn,
-            pushYn,
-            version
+            version,
+            pushYn
         );
       }
     },
