@@ -1,10 +1,12 @@
 import UAParser from 'ua-parser-js';
 
+type settingDataCallback = (version: string, autoLoginYn: 'Y' | 'N', pushYn: 'Y' | 'N') => void;
 type TokenAndVersionCallback = (token: string, version: string, device: MobileOS) => void;
 type UserInfoCallback = (autoLoginYn: 'Y' | 'N', id: string, secret: string) => void;
 type QRCodeCallback = (url: string) => void;
 type CoordinatesCallback = (lat: number, long: number) => void;
 interface Callback {
+  settingData?: settingDataCallback;
   tokenAndVersion?: TokenAndVersionCallback;
   userInfo?: UserInfoCallback;
   qrcode?: QRCodeCallback;
@@ -25,6 +27,16 @@ export default (function(w, uap, logger, _debug) {
   const callback: Callback = {};
 
   const request = {
+    settingData: function (_fn: settingDataCallback) {
+      // assign callback
+      if (!!_fn && typeof _fn === 'function') {
+        callback.settingData = _fn;
+      }
+
+      const code = 'getSettingData';
+
+      requestToNative({code});
+    },
     tokenAndVersion: function (_fn: TokenAndVersionCallback) {
       // assign callback
       if (!!_fn && typeof _fn === 'function') {
@@ -35,7 +47,11 @@ export default (function(w, uap, logger, _debug) {
 
       requestToNative({code});
     },
+    closeWindow: function (url) {
+      const code = 'closeWindow';
 
+      requestToNative({code});
+    },
     userInfo: function (_fn: UserInfoCallback) {
       // assign callback
       if (!!_fn && typeof _fn === 'function') {
@@ -111,6 +127,19 @@ export default (function(w, uap, logger, _debug) {
 
   const response = {
     // callback for request.tokenAndVersion()
+    settingData: function (version, autoLoginYn, pushYn) {
+      log('settingData', {version, autoLoginYn, pushYn});
+
+      // invoke callback with data
+      if (callback.settingData) {
+        callback.settingData(
+            autoLoginYn,
+            pushYn,
+            version
+        );
+      }
+    },
+
     tokenAndVersion: function (token, version) {
       log('tokenAndVersion', {token, version});
 
