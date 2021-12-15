@@ -69,12 +69,12 @@
 		);
 	}
 
-	function goOutLink() {
-		MobileApi.request.linkTo(url);
+	function linkToExternal() {
+		MobileApi.request.linkToExternal(url);
 	}
 
-	function newWindow() {
-		MobileApi.request.openWindow(url);
+	function openBrowser() {
+		MobileApi.request.openBrowser(url);
 	}
 
 	function qrcode() {
@@ -198,8 +198,8 @@
 			<div class="pb-2">
 				<input type="text" bind:value={url} placeholder="URL..." />
 			</div>
-			<button class="btn" on:click={goOutLink} disabled={!url}>goOutLink</button>
-			<button class="btn" on:click={newWindow} disabled={!url}>newWindow</button>
+			<button class="btn" on:click={linkToExternal} disabled={!url}>goOutLink</button>
+			<button class="btn" on:click={openBrowser} disabled={!url}>newWindow</button>
 			<p>Link External page | Open Browser</p>
 		</section>
 

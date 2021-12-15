@@ -86,15 +86,15 @@ export default (function (w, uap, logger, _debug) {
 			}
 		},
 
-		linkTo: function (url = 'http://naver.com') {
-			const code = 'goOutLink';
+		linkToExternal: function (url = 'http://naver.com') {
+			const code = 'linkToExternal';
 
 			// requestToNative({code, url});
 			window.open(url);
 		},
 
-		openWindow: function (url) {
-			const code = 'newWindow';
+		openBrowser: function (url) {
+			const code = 'openBrowser';
 
 			requestToNative({ code, url });
 		},
