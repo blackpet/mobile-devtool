@@ -1,20 +1,30 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../../firb-mobile-firebase-adminsdk-auwn5-a15fb79415.json';
+import serviceAccount from '../../mobile-devtool-firebase-adminsdk-x7tc5-b785e1c67b.json';
 
+let firebase = null;
 let db = null;
-function initDatabase() {
-  if(db !== null) return;
+let messaging = null;
 
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: serviceAccount.project_id,
-      clientEmail: serviceAccount.client_email,
-      privateKey: serviceAccount.private_key,
-    }),
-  });
+function initFirebase() {
+	if (firebase !== null) return firebase;
 
-  return admin.firestore();
+	console.log('initFirebase', firebase);
+
+	admin.initializeApp({
+		credential: admin.credential.cert({
+			projectId: serviceAccount.project_id,
+			clientEmail: serviceAccount.client_email,
+			privateKey: serviceAccount.private_key
+		})
+	});
+
+	return admin;
 }
-db = db ?? initDatabase();
 
-export {db};
+firebase = initFirebase();
+db = db ?? firebase.firestore();
+messaging = messaging ?? firebase.messaging();
+
+console.log('firebase db messaging', db, messaging);
+
+export { db, messaging };

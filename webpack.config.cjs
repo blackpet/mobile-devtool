@@ -1,12 +1,12 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/libs/firb-mobile-api.ts',
+  entry: './src/libs/mobile-api.ts',
   output: {
     path: path.join(__dirname, '/static'),
-    filename: 'firb-mobile-api-bundle.js',
-    library: 'FirbMobile',
-    libraryTarget: "umd",
+    filename: 'mobile-api-bundle.js',
+    library: 'MobileApi',
+    libraryTarget: 'umd',
     libraryExport: 'default',
   },
 

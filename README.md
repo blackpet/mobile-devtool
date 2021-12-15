@@ -1,9 +1,5 @@
 # Development Test Tool `Native`
 
-[https://www.figma.com/file/5XpeMkyLhewdHXQfTpadsr/Firb-Mobile-Development-Mode?node-id=0%3A1](https://www.figma.com/file/5XpeMkyLhewdHXQfTpadsr/Firb-Mobile-Development-Mode?node-id=0%3A1)
-
-[https://www.figma.com/embed?embed_host=notion&url=https%3A%2F%2Fwww.figma.com%2Ffile%2F5XpeMkyLhewdHXQfTpadsr%2FFirb-Mobile-Development-Mode%3Fnode-id%3D0%253A1](https://www.figma.com/embed?embed_host=notion&url=https%3A%2F%2Fwww.figma.com%2Ffile%2F5XpeMkyLhewdHXQfTpadsr%2FFirb-Mobile-Development-Mode%3Fnode-id%3D0%253A1)
-
 ## Landing Page for Development
 
 1. Access URL
