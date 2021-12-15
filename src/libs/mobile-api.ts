@@ -46,7 +46,7 @@ export default (function (w, uap, logger, _debug) {
 				callback.tokenAndVersion = _fn;
 			}
 
-			const code = 'getTokenData';
+			const code = 'tokenAndVersion';
 
 			requestToNative({ code });
 		},
