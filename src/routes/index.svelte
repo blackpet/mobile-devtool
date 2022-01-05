@@ -1,8 +1,16 @@
 <script>
 	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { appInfo, deviceInfo, initAppBridge } from '../libs/nbridge/app-bridge';
+	import {
+		appInfo,
+		clearCache,
+		deviceInfo,
+		exit,
+		goSettings,
+		initAppBridge
+	} from '../libs/nbridge/app-bridge';
 	import UAParser from 'ua-parser-js';
+	import { initLinkBridge, openBrowser } from '../libs/nbridge/link-bridge';
 
 	const uap = new UAParser();
 	const ua = { ua: uap.getUA(), os: uap.getOS(), browser: uap.getBrowser() };
@@ -37,6 +45,7 @@
 		try {
 			nbridge = window.nbridge;
 			initAppBridge(nbridge);
+			initLinkBridge(nbridge);
 			console.log('nbridge', nbridge);
 
 			nbridge.setDebugMode(true);
@@ -46,9 +55,13 @@
 		}
 	}
 
-	async function getAppInfo() {
-		const info = await appInfo();
-		log(info);
+	async function callNbridge(fn, option = null) {
+		const res = await fn(option);
+		log('callNbridge', res);
+	}
+
+	function reload() {
+		location.reload();
 	}
 </script>
 
@@ -59,7 +72,23 @@
 <div class="container mx-auto">
 	<div class="h-[50vh] overflow-hidden overflow-y-scroll overflow-x-scroll">
 		<h1 class="text-center relative">
-			ntoworks App DevTools
+			App DevTools
+			<button class="absolute left-0 text-blue-600 bg-blue-100 rounded p-1" on:click={reload}>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+					/>
+				</svg>
+			</button>
 			<button
 				class="absolute right-0 text-blue-600 bg-blue-100 rounded p-1"
 				on:click={() => goto('urls')}
@@ -81,16 +110,47 @@
 			</button>
 		</h1>
 
-		<!--getSettingData-->
 		<section>
-			<button class="btn" on:click={getAppInfo}>appInfo</button>
-			<p>Request App Version, AutoLoginYn and PushYn</p>
+			<h2>App Bridge</h2>
+			<button class="btn" on:click={() => callNbridge(appInfo)}>appInfo</button>
+			<button class="btn" on:click={() => callNbridge(deviceInfo)}>deviceInfo</button>
+			<button class="btn" on:click={() => callNbridge(exit)}>exit</button>
+			<button class="btn" on:click={() => callNbridge(goSettings)}>goSettings</button>
+			<button class="btn" on:click={() => callNbridge(clearCache)}>clearCache</button>
 		</section>
 
-		<!--getTokenData-->
 		<section>
-			<button class="btn" on:click={deviceInfo}>deviceInfo</button>
-			<p>Request Device Token and App Version</p>
+			<h2>Link Bridge</h2>
+			<div class="pb-2">
+				<input type="text" bind:value={url} placeholder="URL..." />
+			</div>
+			<button class="btn" on:click={() => callNbridge(openBrowser, url)} disabled={!url}
+				>Open Browser
+			</button>
+			<button
+				class="btn"
+				on:click={() => log("[Link External] feature didn't implemented yet!")}
+				disabled={!url}
+				>Link External
+			</button>
+			<p>Open Browser | Link External page</p>
+		</section>
+
+		<section>
+			<h2>Preference Bridge</h2>
+			<div class="pb-2">
+				<input type="text" bind:value={url} placeholder="URL..." />
+			</div>
+			<button class="btn" on:click={() => callNbridge(openBrowser, url)} disabled={!url}
+				>Open Browser
+			</button>
+			<button
+				class="btn"
+				on:click={() => log("[Link External] feature didn't implemented yet!")}
+				disabled={!url}
+				>Link External
+			</button>
+			<p>Open Browser | Link External page</p>
 		</section>
 
 		<section>
@@ -123,7 +183,7 @@
 	class="block w-screen h-[50vh] bg-gray-800 overflow-hidden overflow-y-scroll p-2 text-gray-50 text-xs md:text-base"
 	bind:this={code}
 >
-	{#each logs as log, i}
+	{#each logs as log, i (i)}
 		<code class="block break-all">#{i}: {log}</code>
 	{:else}
 		<code class="text-center">NO LOGS YET</code>

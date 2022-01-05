@@ -1,5 +1,5 @@
 import UAParser from 'ua-parser-js';
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export interface AbstractNBridge {
 	callToNative: (service: string, action: string, option?: any) => void;
@@ -22,7 +22,7 @@ type Logger = {
 };
 
 const uap = new UAParser();
-const logger: Logger = {log: console.log, error: console.error};
+const logger: Logger = { log: console.log, error: console.error };
 
 export default (function (w, uap, logger, _debug = true) {
 	const os = uap.getOS().name.toLowerCase();
@@ -53,38 +53,42 @@ export default (function (w, uap, logger, _debug = true) {
 	function onBridgeReady() {
 		const nbridge: NBridge = getNbridge();
 
-		logger.log('onBridgeReady!');
+		log('onBridgeReady!');
 
 		if (os === 'android') {
 			(nbridge as AndroidNBridge).onBridgeReady();
 		} else if (os === 'ios') {
-			const param = {command: 'onBridgeReady'};
+			const param = { command: 'onBridgeReady' };
 			(nbridge as IosNBridge).postMessage(JSON.stringify(param));
 		}
 	}
 
 	function callToNative(service, action, option = {}) {
-		const nbridge: NBridge = getNbridge();
+		try {
+			const nbridge: NBridge = getNbridge();
 
-		return new Promise((resolve, reject) => {
-			const promiseId = uuid();
+			return new Promise((resolve, reject) => {
+				const promiseId = uuid();
 
-			promises[promiseId] = {resolve, reject};
+				promises[promiseId] = { resolve, reject };
 
-			try {
-				const command = {service, action, promiseId, option};
-				const stringifyCommand = JSON.stringify(command);
+				try {
+					const command = { service, action, promiseId, option };
+					const stringifyCommand = JSON.stringify(command);
 
-				if (os === 'android') {
-					(nbridge as AndroidNBridge).callFromWeb(stringifyCommand);
-				} else if (os === 'ios') {
-					(nbridge as IosNBridge).postMessage(stringifyCommand);
+					if (os === 'android') {
+						(nbridge as AndroidNBridge).callFromWeb(stringifyCommand);
+					} else if (os === 'ios') {
+						(nbridge as IosNBridge).postMessage(stringifyCommand);
+					}
+				} catch (e) {
+					logger.error(e);
+					throw e;
 				}
-			} catch (e) {
-				logger.error(e);
-				throw e;
-			}
-		});
+			});
+		} catch (err) {
+			log('[ERROR] This is not Native App connection!');
+		}
 	}
 
 	function resolvePromise(promiseId: string, response: any, error: any) {
@@ -105,7 +109,7 @@ export default (function (w, uap, logger, _debug = true) {
 	}
 
 	function setLogger(_logger: Logger) {
-		logger = {...logger, ..._logger};
+		logger = { ...logger, ..._logger };
 	}
 
 	function setDebugMode(value: boolean) {
