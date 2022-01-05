@@ -209,14 +209,14 @@ export default (function (w, uap, logger, _debug) {
 
 		// Android
 		else if (os === MobileOS.ANDROID) {
-			if (!window['Android']) {
+			if (!w['Android']) {
 				log('[ERROR] window.Android is not defined!');
 				return;
-			} else if (!window['Android'].icodi) {
+			} else if (!w['Android'].icodi) {
 				log('[ERROR] window.Android.icodi is not defined!');
 				return;
 			}
-			window['Android'].icodi(jsonStr);
+			w['Android'].icodi(jsonStr);
 		} else {
 			log('[ERROR] cannot detected device type!');
 		}

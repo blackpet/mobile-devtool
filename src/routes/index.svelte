@@ -1,13 +1,13 @@
 <script>
 	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import axios from 'axios';
+	import { appInfo, deviceInfo, initAppBridge } from '../libs/nbridge/app-bridge';
 	import UAParser from 'ua-parser-js';
 
 	const uap = new UAParser();
 	const ua = { ua: uap.getUA(), os: uap.getOS(), browser: uap.getBrowser() };
 
-	let MobileApi;
+	let nbridge;
 	let logs = [];
 	let url = 'http://naver.com';
 	let code; // console code panel
@@ -21,7 +21,7 @@
 	};
 
 	onMount(() => {
-		initMobileApi();
+		initNbridge();
 	});
 
 	async function log(...args) {
@@ -33,90 +33,33 @@
 		console.log(...args);
 	}
 
-	async function initMobileApi() {
-		MobileApi = window.MobileApi;
-		console.log('MobileApi', MobileApi);
+	async function initNbridge() {
+		try {
+			nbridge = window.nbridge;
+			initAppBridge(nbridge);
+			console.log('nbridge', nbridge);
 
-		version = (await axios.get('/api/version')).data;
-		console.log(version);
-		MobileApi.setMobileInfo(version);
-		MobileApi.isDebugMode(true);
-		MobileApi.setLogger({ log });
+			nbridge.setDebugMode(true);
+			nbridge.setLogger({ log });
+		} catch (err) {
+			log('error!!!', err);
+		}
 	}
 
-	function getTokenData() {
-		MobileApi.request.tokenAndVersion((_token, version, os) => {
-			log('callback::getTokenData', _token, version, os);
-			token = _token;
-			log('set token locally. you can test to push notification now!');
-		});
-	}
-
-	// 설정 화면
-	function getSettingData() {
-		MobileApi.request.settingData((version, pushYn) =>
-			log('callback::getSettingData', version, pushYn)
-		);
-	}
-
-	function setAutoLoginData() {
-		MobileApi.request.saveUserInfo('Y', 'user1');
-	}
-
-	function getAutoLoginData() {
-		MobileApi.request.userInfo((autoLoginYn, id, secret) =>
-			log('callback::getAutoLoginData', autoLoginYn, id, secret)
-		);
-	}
-
-	function linkToExternal() {
-		MobileApi.request.linkToExternal(url);
-	}
-
-	function openBrowser() {
-		MobileApi.request.openBrowser(url);
-	}
-
-	function qrcode() {
-		MobileApi.request.qrcode((url) => log('callback::qrcode', url));
-	}
-
-	function coordinates() {
-		MobileApi.request.coordinates((lat, long) => log('callback::coordinates', lat, long));
-	}
-
-	async function updateVersion(os) {
-		await axios.post('/api/version', { id: os, ...version[os] });
-		log(`${os} version info updated!`);
-	}
-
-	async function sendPush() {
-		// DEBUG
-		token ??=
-			'f6yVeJQwDUK6rCl2Lt0Brh:APA91bFP3JL7N4VAqMQxXLXrd2zGmV7KrgpRB9yLhZ93HQVN1IOjUDKRttThHMPGDV8UpcWogv9NQeSOW9x8g4B0-a1WKxH7x3t3WY75e9RKlQECqetR7k7Hp2k9G2AEy2jAF7xt-Upq';
-
-		const data = { ...pushData, token };
-		const res = await axios.post('/api/push', data);
-		log(res.data);
-	}
-
-	function orientation(orientation) {
-		MobileApi.request.orientation(orientation);
-	}
-
-	function download(url) {
-		location.href = url;
+	async function getAppInfo() {
+		const info = await appInfo();
+		log(info);
 	}
 </script>
 
 <svelte:head>
-	<script src="/mobile-api-bundle.js"></script>
+	<script src="/nbridge-bundle.js"></script>
 </svelte:head>
 
 <div class="container mx-auto">
 	<div class="h-[50vh] overflow-hidden overflow-y-scroll overflow-x-scroll">
 		<h1 class="text-center relative">
-			Hybrid App DevTools
+			ntoworks App DevTools
 			<button
 				class="absolute right-0 text-blue-600 bg-blue-100 rounded p-1"
 				on:click={() => goto('urls')}
@@ -138,166 +81,17 @@
 			</button>
 		</h1>
 
-		<!--Documentation-->
-		<section>
-			<p>
-				Visit <a
-					href="https://www.notion.so/blackpet/Mobile-Native-Interface-892e01854e9148dfbb7601849c1b7830"
-					target="_blank">Notion Page</a
-				> to read the documentation
-			</p>
-		</section>
-
 		<!--getSettingData-->
 		<section>
-			<button class="btn" on:click={getSettingData}>getSettingData</button>
+			<button class="btn" on:click={getAppInfo}>appInfo</button>
 			<p>Request App Version, AutoLoginYn and PushYn</p>
 		</section>
 
 		<!--getTokenData-->
 		<section>
-			<button class="btn" on:click={getTokenData}>getTokenData</button>
+			<button class="btn" on:click={deviceInfo}>deviceInfo</button>
 			<p>Request Device Token and App Version</p>
 		</section>
-
-		{#if token}
-			<section class="bg-green-400">
-				<h2>Push Test</h2>
-				<div class="space-y-1 sm:space-y-0 sm:gap-2 sm:grid sm:grid-cols-3">
-					<input type="text" bind:value={pushData.title} placeholder="Title..." />
-					<input type="text" bind:value={pushData.body} placeholder="Body..." />
-					<input type="text" bind:value={pushData.url} placeholder="Target URL..." />
-				</div>
-				<div class="flex justify-between mt-4">
-					<div>
-						<a href on:click|preventDefault={() => (pushData.url = 'http://naver.com')}>네이버</a> |
-						<a
-							href
-							on:click|preventDefault={() => (pushData.url = 'https://firb-mobile.vercel.app/')}
-							>DevTool</a
-						>
-						|
-						<a href on:click|preventDefault={() => (pushData.url = '')}>직접입력</a>
-					</div>
-					<div>
-						<button class="btn" on:click={sendPush}>Send</button>
-					</div>
-				</div>
-			</section>
-		{/if}
-
-		<!--autoLoginData-->
-		<section>
-			<button class="btn" on:click={setAutoLoginData}>setAutoLoginData</button>
-			<button class="btn" on:click={getAutoLoginData}>getAutoLoginData</button>
-			<p>Save Auto-Login Info | Retrieve Auto-Login Info</p>
-		</section>
-
-		<!--goOutLink / newWindow-->
-		<section>
-			<div class="pb-2">
-				<input type="text" bind:value={url} placeholder="URL..." />
-			</div>
-			<button class="btn" on:click={linkToExternal} disabled={!url}>goOutLink</button>
-			<button class="btn" on:click={openBrowser} disabled={!url}>newWindow</button>
-			<p>Link External page | Open Browser</p>
-		</section>
-
-		<!--QRCode-->
-		<section>
-			<button class="btn" on:click={qrcode}>qrcode</button>
-			<p>Execute QRCode Reader</p>
-		</section>
-
-		<!--GEO coordinates-->
-		<section>
-			<button class="btn" on:click={coordinates}>coordinates</button>
-			<p>Request GPS Coordinates</p>
-		</section>
-
-		<!--set orientation -->
-		<section>
-			<button class="btn" on:click={() => orientation('landscape')}>landscape</button>
-			<button class="btn" on:click={() => orientation('portrait')}>portrait</button>
-			<p>Request set Orientation</p>
-		</section>
-
-		<section class="bg-green-400">
-			<h2>Response Test</h2>
-			<button
-				class="btn"
-				on:click={() =>
-					MobileApi.response.tokenAndVersion(
-						'f6yVeJQwDUK6rCl2Lt0Brh:APA91bFP3JL7N4VAqMQxXLXrd2zGmV7KrgpRB9yLhZ93HQVN1IOjUDKRttThHMPGDV8UpcWogv9NQeSOW9x8g4B0-a1WKxH7x3t3WY75e9RKlQECqetR7k7Hp2k9G2AEy2jAF7xt-Upq',
-						'0.0.2'
-					)}
-				>getTokenData
-			</button>
-			<button
-				class="btn"
-				on:click={() => MobileApi.response.userInfo('Y', 'stored user-id', 'stored secret key')}
-			>
-				getAutoLoginData
-			</button>
-			<button class="btn" on:click={() => MobileApi.response.qrcode('http://qr-code-url.com')}
-				>qrcode
-			</button>
-			<button class="btn" on:click={() => MobileApi.response.coordinates(123.45, 567.89)}
-				>coordinates
-			</button>
-		</section>
-
-		{#if version}
-			<section class="bg-red-400">
-				<div class="flex gap-2">
-					<h2>iOS Version</h2>
-					<button class="btn" on:click={() => updateVersion('ios')}>update</button>
-					<button class="btn" on:click={() => download(version.ios.download)}>download</button>
-				</div>
-
-				<div class="flex flex-col md:flex-row md:justify-between">
-					<div class="p-2 flex-1">
-						Download URL: <input
-							type="text"
-							bind:value={version.ios.download}
-							placeholder="iOS Download URL..."
-						/>
-					</div>
-					<div class="p-2 flex-1">
-						Version: <input
-							type="text"
-							bind:value={version.ios.version}
-							placeholder="iOS Version..."
-						/>
-					</div>
-				</div>
-			</section>
-
-			<section class="bg-red-400">
-				<div class="flex gap-2">
-					<h2>Android Version</h2>
-					<button class="btn" on:click={() => updateVersion('android')}>update</button>
-					<button class="btn" on:click={() => download(version.android.download)}>download</button>
-				</div>
-
-				<div class="flex flex-col md:flex-row md:justify-between">
-					<div class="p-2 flex-1">
-						Download URL: <input
-							type="text"
-							bind:value={version.android.download}
-							placeholder="Android Download URL..."
-						/>
-					</div>
-					<div class="p-2 flex-1">
-						Version: <input
-							type="text"
-							bind:value={version.android.version}
-							placeholder="Android Version..."
-						/>
-					</div>
-				</div>
-			</section>
-		{/if}
 
 		<section>
 			<h2>User Agent</h2>
