@@ -11,6 +11,12 @@
 	} from '../libs/nbridge/app-bridge';
 	import UAParser from 'ua-parser-js';
 	import { initLinkBridge, openBrowser } from '../libs/nbridge/link-bridge';
+	import {
+		getPreference,
+		initPreferenceBridge,
+		removePreference,
+		setPreference
+	} from '../libs/nbridge/preference-bridge';
 
 	const uap = new UAParser();
 	const ua = { ua: uap.getUA(), os: uap.getOS(), browser: uap.getBrowser() };
@@ -18,6 +24,7 @@
 	let nbridge;
 	let logs = [];
 	let url = 'http://naver.com';
+
 	let code; // console code panel
 	let version;
 
@@ -46,6 +53,7 @@
 			nbridge = window.nbridge;
 			initAppBridge(nbridge);
 			initLinkBridge(nbridge);
+			initPreferenceBridge(nbridge);
 			console.log('nbridge', nbridge);
 
 			nbridge.setDebugMode(true);
@@ -58,6 +66,34 @@
 	async function callNbridge(fn, option = null) {
 		const res = await fn(option);
 		log('callNbridge', res);
+	}
+
+	// preference bridge
+	let preferenceKey, preferenceValue, preferenceAction;
+
+	async function callGetPreference(defaultValue) {
+		preferenceAction = 'GET';
+		preferenceValue = await getPreference(preferenceKey, defaultValue);
+		log('getPreference', preferenceKey, preferenceValue);
+	}
+
+	async function callSetPreference() {
+		preferenceAction = 'SET';
+		preferenceValue = await setPreference(preferenceKey, preferenceValue);
+		log('setPreference', preferenceKey, preferenceValue);
+	}
+
+	async function callRemovePreference() {
+		preferenceAction = 'REMOVE';
+		preferenceValue = await removePreference(preferenceKey);
+		log('removePreference', preferenceKey, preferenceValue);
+	}
+
+	async function callGetToken() {
+		preferenceAction = 'GET';
+		preferenceKey = 'notification_token';
+		preferenceValue = await getPreference(preferenceKey, 'NO_TOKEN_VALUE');
+		log('callGetToken', preferenceKey, preferenceValue);
 	}
 
 	function reload() {
@@ -138,19 +174,27 @@
 
 		<section>
 			<h2>Preference Bridge</h2>
-			<div class="pb-2">
-				<input type="text" bind:value={url} placeholder="URL..." />
+			<div class="pb-2 grid grid-cols-1 gap-2 lg:grid-cols-2">
+				<input type="text" bind:value={preferenceKey} placeholder="Key" />
+				<input type="text" bind:value={preferenceValue} placeholder="Value" />
 			</div>
-			<button class="btn" on:click={() => callNbridge(openBrowser, url)} disabled={!url}
-				>Open Browser
+			<button
+				class="btn"
+				on:click={() => callGetPreference('DEFAULT_VALUE')}
+				disabled={!preferenceKey}
+				>Get Preference
 			</button>
 			<button
 				class="btn"
-				on:click={() => log("[Link External] feature didn't implemented yet!")}
-				disabled={!url}
-				>Link External
+				on:click={() => callSetPreference()}
+				disabled={!preferenceKey || !preferenceValue}
+				>Set Preference
 			</button>
-			<p>Open Browser | Link External page</p>
+			<button class="btn" on:click={() => callRemovePreference()} disabled={!preferenceKey}
+				>Remove Preference
+			</button>
+			<button class="btn" on:click={() => callGetToken()}>Get Token</button>
+			<p class="break-all">[{preferenceAction}] {preferenceKey}={preferenceValue}</p>
 		</section>
 
 		<section>

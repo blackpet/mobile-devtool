@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from '../../mobile-devtool-firebase-adminsdk-x7tc5-b785e1c67b.json';
+import serviceAccount from '../../icodi-f97e8-firebase-adminsdk-ni6tp-a7c9557013.json';
 
 let firebase = null;
 let db = null;
