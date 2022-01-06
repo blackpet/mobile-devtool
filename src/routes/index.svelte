@@ -73,7 +73,7 @@
 	}
 
 	// preference bridge
-	let preferenceKey, preferenceValue, preferenceAction;
+	let preferenceKey, preferenceValue, preferenceValueInput, preferenceAction;
 
 	async function callGetPreference(defaultValue) {
 		preferenceAction = 'GET';
@@ -83,14 +83,15 @@
 
 	async function callSetPreference() {
 		preferenceAction = 'SET';
-		preferenceValue = await setPreference(preferenceKey, preferenceValue);
-		log('setPreference', preferenceKey, preferenceValue);
+		await setPreference(preferenceKey, preferenceValueInput);
+		log('setPreference', preferenceKey, preferenceValueInput);
+		preferenceValueInput = '';
 	}
 
 	async function callRemovePreference() {
 		preferenceAction = 'REMOVE';
-		preferenceValue = await removePreference(preferenceKey);
-		log('removePreference', preferenceKey, preferenceValue);
+		await removePreference(preferenceKey);
+		log('removePreference', preferenceKey);
 	}
 
 	async function callGetToken() {
@@ -118,6 +119,15 @@
 		const data = {...pushData, token};
 		const res = await axios.post('/api/push', data);
 		log(res.data);
+	}
+
+	async function updateVersion(os) {
+		await axios.post('/api/version', {id: os, ...version[os]});
+		log(`${os} version info updated!`);
+	}
+
+	function download(url) {
+		location.href = url;
 	}
 </script>
 
@@ -236,6 +246,58 @@
 					</div>
 					<div>
 						<button class="btn" on:click={sendPush}>Send</button>
+					</div>
+				</div>
+			</section>
+		{/if}
+
+		{#if version}
+			<section class="bg-red-400">
+				<div class="flex gap-2">
+					<h2>iOS Version</h2>
+					<button class="btn" on:click={() => updateVersion('ios')}>update</button>
+					<button class="btn" on:click={() => download(version.ios.download)}>download</button>
+				</div>
+
+				<div class="flex flex-col md:flex-row md:justify-between">
+					<div class="p-2 flex-1">
+						Download URL: <input
+									type="text"
+									bind:value={version.ios.download}
+									placeholder="iOS Download URL..."
+					/>
+					</div>
+					<div class="p-2 flex-1">
+						Version: <input
+									type="text"
+									bind:value={version.ios.version}
+									placeholder="iOS Version..."
+					/>
+					</div>
+				</div>
+			</section>
+
+			<section class="bg-red-400">
+				<div class="flex gap-2">
+					<h2>Android Version</h2>
+					<button class="btn" on:click={() => updateVersion('android')}>update</button>
+					<button class="btn" on:click={() => download(version.android.download)}>download</button>
+				</div>
+
+				<div class="flex flex-col md:flex-row md:justify-between">
+					<div class="p-2 flex-1">
+						Download URL: <input
+									type="text"
+									bind:value={version.android.download}
+									placeholder="Android Download URL..."
+					/>
+					</div>
+					<div class="p-2 flex-1">
+						Version: <input
+									type="text"
+									bind:value={version.android.version}
+									placeholder="Android Version..."
+					/>
 					</div>
 				</div>
 			</section>
