@@ -1,11 +1,20 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/libs/mobile-api.ts',
+  /*  entry: './src/libs/mobile-api.ts',
+    output: {
+      path: path.join(__dirname, '/static'),
+      filename: 'mobile-api-bundle.js',
+      library: 'MobileApi',
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+    },*/
+
+  entry: './src/libs/nbridge/nbridge.ts',
   output: {
     path: path.join(__dirname, '/static'),
-    filename: 'mobile-api-bundle.js',
-    library: 'MobileApi',
+    filename: 'nbridge-bundle.js',
+    library: 'nbridge',
     libraryTarget: 'umd',
     libraryExport: 'default',
   },
