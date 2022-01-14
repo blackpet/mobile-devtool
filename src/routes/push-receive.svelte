@@ -1,6 +1,18 @@
-<script lang="ts">
-  import {goto} from "$app/navigation";
+<script context="module" lang="ts">
+  export function load({url: {searchParams}}) {
+    console.log('searchParams', searchParams);
+    return {
+      props: {
+        params: searchParams
+      }
+    }
+  }
+</script>
 
+<script lang="ts">
+  import {goto} from '$app/navigation';
+
+  export let params;
 </script>
 
 <div class="container mx-auto">
@@ -34,6 +46,6 @@
   </h1>
 
   <section>
-    TODO
+    <code>{params}</code>
   </section>
 </div>
