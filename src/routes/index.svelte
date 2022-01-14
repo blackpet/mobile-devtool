@@ -31,9 +31,9 @@
 
 	let token; // device token
 	let pushData = {
-		title: '',
-		body: '',
-		url: ''
+		message: '',
+		foo: '',
+		bar: ''
 	};
 
 	onMount(() => {
@@ -70,6 +70,10 @@
 	async function callNbridge(fn, option = null) {
 		const res = await fn(option);
 		log('callNbridge', res);
+	}
+
+	function linkExternal() {
+		window.open(url);
 	}
 
 	// preference bridge
@@ -116,7 +120,7 @@
 		token ??=
 						'fP-GTzM0P0rYpHAi95fEer:APA91bHKJ3wTRgyHxfvIRKRh1M37M2B7HjDDN18FvKh7NbYbHg11CVo3WNma9mWIE579W6AmMEhXF2mXyHI6lZ2nrtBvebpi9RfTw8PIt9YX4sOdd7Z835UJJq0v7lAth8eao0zW-oTT';
 
-		const data = {...pushData, token};
+		const data = {...pushData, token, os: ua.os.name.toLowerCase()};
 		const res = await axios.post('/api/push', data);
 		log(res.data);
 	}
@@ -195,7 +199,7 @@
 			</button>
 			<button
 							class="btn"
-							on:click={() => log("[Link External] feature didn't implemented yet!")}
+							on:click={linkExternal}
 							disabled={!url}
 			>Link External
 			</button>
@@ -231,19 +235,11 @@
 			<section class="bg-green-400">
 				<h2>Push Test</h2>
 				<div class="space-y-1 sm:space-y-0 sm:gap-2 sm:grid sm:grid-cols-3">
-					<input type="text" bind:value={pushData.title} placeholder="Title..."/>
-					<input type="text" bind:value={pushData.body} placeholder="Body..."/>
-					<input type="text" bind:value={pushData.url} placeholder="Target URL..."/>
+					<input type="text" bind:value={pushData.message} placeholder="Push Message..."/>
+					<input type="text" bind:value={pushData.foo} placeholder="Custom Param: foo..."/>
+					<input type="text" bind:value={pushData.bar} placeholder="Custom Param: bar..."/>
 				</div>
 				<div class="flex justify-between mt-4">
-					<div>
-						<a href on:click|preventDefault={() => (pushData.url = 'http://naver.com')}>네이버</a> |
-						<a href on:click|preventDefault={() => (pushData.url = 'https://icodi.vercel.app/')}
-						>DevTool</a
-						>
-						|
-						<a href on:click|preventDefault={() => (pushData.url = '')}>직접입력</a>
-					</div>
 					<div>
 						<button class="btn" on:click={sendPush}>Send</button>
 					</div>
